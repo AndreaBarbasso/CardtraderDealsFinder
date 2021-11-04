@@ -1,0 +1,14 @@
+span.badge {
+  color: whitesmoke;
+  padding: .1em;
+  border: 1px solid darkslategrey;
+  margin: .2em 0;
+}
+
+span.badge.zero {
+  background-color: darkorange
+}
+
+span.badge.post {
+  background-color: forestgreen
+}

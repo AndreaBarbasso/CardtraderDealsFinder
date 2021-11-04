@@ -1,0 +1,29 @@
+<select [(ngModel)]="selectedExpansion">
+  <option [ngValue]="-1">Choose an expansion or 🍌 GO BANANAS 🍌</option>
+  <option *ngFor="let expansion of expansions" [ngValue]="expansion.id">{{expansion.name}}</option>
+</select>
+<select [(ngModel)]="selectedMinCondition">
+  <option *ngFor="let condition of conditionsSelect" [ngValue]="condition.value">{{condition.label}}</option>
+</select>
+<button type="button" [disabled]="selectedExpansion === -1" (click)="getDealsForExpansion()">Find deals!</button>
+<div style="margin: 1em 0"></div>
+<div>
+  <div *ngFor="let goBananasSet of goBananasSets">
+    <button type="button" (click)="goBananas(goBananasSet.min, goBananasSet.max)">
+      🍌 GO BANANAS ({{goBananasSet.min}} - {{goBananasSet.max}}) 🍌
+    </button>
+  </div>
+</div>
+
+<ul>
+  <li *ngFor="let r of response" style="margin: .4em 0"><a [href]="cardtraderBaseUrl + r.bestItem.blueprint_id" target="_blank">
+    <strong>
+      <span class="badge zero" *ngIf="r.zero">ZERO</span>
+      <span class="badge post" *ngIf="!r.zero">POST</span>
+      <span style="color: darkred">[[{{r.quotient | percent}}]]</span>
+      {{r.bestItem.name_en}} [{{r.bestItem.properties_hash.condition}}]
+    </strong>: {{r.bestItem.price.formatted}}</a></li>
+</ul>
+
+<div *ngIf="response?.length === 0 && showNothingToDo">Nulla da fare!</div>
+<div *ngIf="response?.length === 0 && !showNothingToDo">Loading...</div>
