@@ -50,13 +50,16 @@ export class CardtraderApiService {
       {headers: this.HTTP_HEADERS});
   }
 
-  getSingleCardsOfExpansion(expansionId: number): Observable<MarketplaceProducts> {
+  getSingleCardsOfExpansion(expansionId: number): Observable<ProductsWithBlueprints> {
     return forkJoin([this.getMarketplaceProducts(expansionId), this.getBlueprints(expansionId)])
       .pipe(map(([marketplaceProducts, blueprints]) => {
-        const response: MarketplaceProducts = {};
+        const response: ProductsWithBlueprints = {};
         for (const blueprint of blueprints) {
           if (blueprint.category_id === this.CATEGORY_ID && !!marketplaceProducts[blueprint.id]) {
-            response[blueprint.id] = marketplaceProducts[blueprint.id];
+            response[blueprint.id] = {
+              product: marketplaceProducts[blueprint.id],
+              blueprint
+            };
           }
         }
         return response;
@@ -64,6 +67,15 @@ export class CardtraderApiService {
   }
 
 
+}
+
+export interface ProductWithBlueprint {
+  product: MarketplaceProduct[];
+  blueprint: Blueprint;
+}
+
+export interface ProductsWithBlueprints {
+  [id: string]: ProductWithBlueprint;
 }
 
 export interface GameExpansion {
@@ -95,7 +107,11 @@ export interface MarketplaceProduct {
     mtg_language: string,
     altered: boolean
   };
-  expansion: string;
+  expansion: {
+    id: number;
+    code: string;
+    name_en: string;
+  };
   user: {
     id: number,
     username: string,
@@ -117,7 +133,7 @@ export interface Blueprint {
   category_id: number;
   expansion_id: number;
   editable_properties: string;
-  mkm_id: number;
+  card_market_id: number;
   tcg_player_id: null;
   scryfall_id: string;
 }

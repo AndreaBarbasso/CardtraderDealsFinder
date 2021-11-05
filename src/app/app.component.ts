@@ -1,5 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {CardtraderApiService, GameExpansion, MarketplaceProduct, MarketplaceProducts} from './cardtrader-api.service';
+import {
+  CardtraderApiService,
+  GameExpansion,
+  MarketplaceProduct,
+  ProductsWithBlueprints
+} from './cardtrader-api.service';
 import {forkJoin} from 'rxjs';
 
 @Component({
@@ -10,6 +15,7 @@ import {forkJoin} from 'rxjs';
 export class AppComponent implements OnInit {
 
   readonly cardtraderBaseUrl = 'https://cardtrader.com/cards/';
+  readonly mkmBaseUrl = 'https://www.cardmarket.com/it/Magic/Products/Singles/';
   readonly conditionsValues = {
     Poor: 0,
     'Heavily Played': 1,
@@ -52,7 +58,7 @@ export class AppComponent implements OnInit {
   selectedMinCondition = 4;
   showNothingToDo = false;
 
-  response: { bestItem: MarketplaceProduct, quotient: number, zero: boolean }[];
+  response: { bestItem: MarketplaceProduct, quotient: number, zero: boolean, mkmId: number }[];
   goBananasSets: { min: number, max: number }[] = [];
 
   constructor(private cardtraderApiService: CardtraderApiService) {
@@ -62,8 +68,8 @@ export class AppComponent implements OnInit {
     this.cardtraderApiService.getInfo().subscribe();
     this.cardtraderApiService.getExpansions().subscribe(r => {
       this.expansions = r;
-      for (let i = 0; i < r.length; i += 50) {
-        this.goBananasSets.push({min: i, max: Math.min(i + 50, r.length)});
+      for (let i = 0; i < r.length; i += 100) {
+        this.goBananasSets.push({min: i, max: Math.min(i + 100, r.length)});
       }
     });
   }
@@ -97,10 +103,10 @@ export class AppComponent implements OnInit {
     }
   }
 
-  handleDealsResponse(r: MarketplaceProducts): void {
+  handleDealsResponse(r: ProductsWithBlueprints): void {
     for (const id in r) {
       if (r.hasOwnProperty(id)) {
-        const cards = r[id];
+        const cards = r[id].product;
         const max = Math.min(this.maxCards, cards.length);
         for (let i = 0; i < max; i++) {
           const currCard = cards[i];
@@ -113,7 +119,8 @@ export class AppComponent implements OnInit {
             this.response.push({
               bestItem: returnItems[0],
               quotient: returnItems[0].price.cents / nextCard.price.cents,
-              zero: returnItems.some(item => item.user.can_sell_via_hub)
+              zero: returnItems.some(item => item.user.can_sell_via_hub),
+              mkmId: r[id].blueprint.card_market_id
             });
             break;
           }

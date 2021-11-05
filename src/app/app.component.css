@@ -3,6 +3,9 @@ span.badge {
   padding: .1em;
   border: 1px solid darkslategrey;
   margin: .2em 0;
+  display: inline-block;
+  text-align: center;
+  width: 3em;
 }
 
 span.badge.zero {
@@ -11,4 +14,8 @@ span.badge.zero {
 
 span.badge.post {
   background-color: forestgreen
+}
+
+span.badge.mkm {
+  background-color: darkblue;
 }

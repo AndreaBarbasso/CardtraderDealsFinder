@@ -10,19 +10,21 @@
 <div>
   <div *ngFor="let goBananasSet of goBananasSets">
     <button type="button" (click)="goBananas(goBananasSet.min, goBananasSet.max)">
-      🍌 GO BANANAS ({{goBananasSet.min}} - {{goBananasSet.max}}) 🍌
+      🍌 GO BANANAS ({{goBananasSet.min + 1}} - {{goBananasSet.max}}) 🍌
     </button>
   </div>
 </div>
 
 <ul>
-  <li *ngFor="let r of response" style="margin: .4em 0"><a [href]="cardtraderBaseUrl + r.bestItem.blueprint_id" target="_blank">
+  <li *ngFor="let r of response" style="margin: .4em 0">
     <strong>
-      <span class="badge zero" *ngIf="r.zero">ZERO</span>
-      <span class="badge post" *ngIf="!r.zero">POST</span>
+      <a [href]="cardtraderBaseUrl + r.bestItem.blueprint_id" target="_blank">
+        <span class="badge zero" *ngIf="r.zero">ZERO</span>
+        <span class="badge post" *ngIf="!r.zero">POST</span>
+      </a>
       <span style="color: darkred">[[{{r.quotient | percent}}]]</span>
-      {{r.bestItem.name_en}} [{{r.bestItem.properties_hash.condition}}]
-    </strong>: {{r.bestItem.price.formatted}}</a></li>
+      {{r.bestItem.name_en}} ({{r.bestItem.expansion.code | uppercase}}) [{{r.bestItem.properties_hash.condition}}]
+    </strong>: {{r.bestItem.price.formatted}}</li>
 </ul>
 
 <div *ngIf="response?.length === 0 && showNothingToDo">Nulla da fare!</div>
