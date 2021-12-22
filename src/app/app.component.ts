@@ -16,6 +16,7 @@ export class AppComponent implements OnInit {
 
   readonly cardtraderBaseUrl = 'https://cardtrader.com/cards/';
   readonly mkmBaseUrl = 'https://www.cardmarket.com/it/Magic/Products/Singles/';
+  readonly goBananasLength = 50;
   readonly conditionsValues = {
     Poor: 0,
     'Heavily Played': 1,
@@ -60,6 +61,7 @@ export class AppComponent implements OnInit {
 
   response: { bestItem: MarketplaceProduct, quotient: number, zero: boolean, mkmId: number }[];
   goBananasSets: { min: number, max: number }[] = [];
+  alreadyDidBananas = {};
 
   constructor(private cardtraderApiService: CardtraderApiService) {
   }
@@ -68,13 +70,14 @@ export class AppComponent implements OnInit {
     this.cardtraderApiService.getInfo().subscribe();
     this.cardtraderApiService.getExpansions().subscribe(r => {
       this.expansions = r;
-      for (let i = 0; i < r.length; i += 100) {
-        this.goBananasSets.push({min: i, max: Math.min(i + 100, r.length)});
+      for (let i = 0; i < r.length; i += this.goBananasLength) {
+        this.goBananasSets.push({min: i, max: Math.min(i + this.goBananasLength, r.length)});
       }
     });
   }
 
   goBananas(min: number, max: number): void {
+    this.alreadyDidBananas[min] = true;
     const calls$ = this.expansions.slice(min, max).map(e => this.cardtraderApiService.getSingleCardsOfExpansion(e.id));
     this.response = [];
     forkJoin(calls$).subscribe(results => {

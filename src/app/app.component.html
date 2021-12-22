@@ -9,7 +9,7 @@
 <div style="margin: 1em 0"></div>
 <div>
   <div *ngFor="let goBananasSet of goBananasSets">
-    <button type="button" (click)="goBananas(goBananasSet.min, goBananasSet.max)">
+    <button type="button" [disabled]="alreadyDidBananas[goBananasSet.min]" (click)="goBananas(goBananasSet.min, goBananasSet.max)">
       🍌 GO BANANAS ({{goBananasSet.min + 1}} - {{goBananasSet.max}}) 🍌
     </button>
   </div>
