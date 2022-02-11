@@ -51,10 +51,11 @@ export class AppComponent implements OnInit {
 
   maxQuotient = .6;
   maxCents = 10000;
-  minCents = 100;
+  minCents = 50;
   maxCards = 1;
 
   expansions: GameExpansion[] = [];
+  excludedExpansions = ['cei', 'ced'];
   selectedExpansion = -1;
   selectedMinCondition = 4;
   showNothingToDo = false;
@@ -69,9 +70,9 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.cardtraderApiService.getInfo().subscribe();
     this.cardtraderApiService.getExpansions().subscribe(r => {
-      this.expansions = r;
-      for (let i = 0; i < r.length; i += this.goBananasLength) {
-        this.goBananasSets.push({min: i, max: Math.min(i + this.goBananasLength, r.length)});
+      this.expansions = r.filter(e => !this.excludedExpansions.includes(e.code));
+      for (let i = 0; i < this.expansions.length; i += this.goBananasLength) {
+        this.goBananasSets.push({min: i, max: Math.min(i + this.goBananasLength, this.expansions.length)});
       }
     });
   }
